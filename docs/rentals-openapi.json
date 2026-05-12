@@ -1,0 +1,2436 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Rental Search API",
+    "description": "This API provides access to publicly available data on the Australian rental market in 2026. The API endpoints and their usage are described in detail below."
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Enter JWT Bearer token **_only_**"
+      }
+    }
+  },
+  "paths": {
+    "/rentals/states": {
+      "get": {
+        "tags": [
+          "Rentals"
+        ],
+        "description": "Returns a list of Australian states and territories, ordered alphabetically.",
+        "responses": {
+          "200": {
+            "description": "An array of state initialisms.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "examples": [
+                    [
+                      "ACT",
+                      "NSW",
+                      "NT",
+                      "Qld",
+                      "SA",
+                      "Tas",
+                      "Vic",
+                      "WA"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid query parameters: yourParamHere. Query parameters are not permitted."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rentals/property-types": {
+      "get": {
+        "tags": [
+          "Rentals"
+        ],
+        "description": "Returns a list of rental property types, ordered alphabetically.",
+        "responses": {
+          "200": {
+            "description": "An array of property types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "examples": [
+                    [
+                      "acreage/semi-rural",
+                      "apartment",
+                      "duplex/semi-detached",
+                      "flat",
+                      "house",
+                      "other",
+                      "studio",
+                      "terrace",
+                      "townhouse",
+                      "unit",
+                      "villa"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid query parameters: yourParamHere. Query parameters are not permitted."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rentals/search": {
+      "get": {
+        "tags": [
+          "Rentals"
+        ],
+        "description": "Returns a list of rental properties, filtered and sorted as specified. If no sort order is specified, properties will be returned sorted by id in ascending order.",
+        "parameters": [
+          {
+            "name": "suburb",
+            "in": "query",
+            "description": "If this parameter is present, only rentals in this suburb will be returned.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "If this parameter is present, only rentals in this state will be returned.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACT",
+                "NSW",
+                "NT",
+                "Qld",
+                "SA",
+                "Tas",
+                "Vic",
+                "WA"
+              ]
+            }
+          },
+          {
+            "name": "postcode",
+            "in": "query",
+            "description": "If this parameter is present, only rentals in the specified postcode will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9999
+            }
+          },
+          {
+            "name": "minimumRent",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with weekly rent equal to or higher than this will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maximumRent",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with weekly rent equal to or lower than this will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "minimumBathrooms",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with at least this many bathrooms will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maximumBathrooms",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with at most this many bathrooms will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "minimumBedrooms",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with at least this many bedrooms will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maximumBedrooms",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with at most this many bedrooms will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "minimumParking",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with at least this many parking spaces will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maximumParking",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with at most this many parking spaces will be returned.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "propertyTypes",
+            "in": "query",
+            "description": "If this parameter is present, only rentals that are one of the specified property types will be returned.",
+            "required": false,
+            "example": [
+              "apartment",
+              "studio"
+            ],
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "acreage/semi-rural",
+                  "apartment",
+                  "duplex/semi-detached",
+                  "flat",
+                  "house",
+                  "other",
+                  "studio",
+                  "terrace",
+                  "townhouse",
+                  "unit",
+                  "villa"
+                ]
+              }
+            }
+          },
+          {
+            "name": "minimumRating",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with an average rating of at least this many stars will be returned.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maximumRating",
+            "in": "query",
+            "description": "If this parameter is present, only rentals with an average rating of at most this many stars will be returned.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "If this parameter is present, results will be sorted by this field. If sortOrder is not specified, the default sort order is ascending.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "title",
+                "rent",
+                "propertyType",
+                "latitude",
+                "longitude",
+                "postcode",
+                "state",
+                "suburb",
+                "bathrooms",
+                "bedrooms",
+                "parkingSpaces",
+                "averageRating",
+                "numRatings"
+              ]
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "The order (asc or desc) to sort the results in. This field is only valid if the sortBy parameter is provided.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of objects containing id, title, rent, propertyType, latitude, longitude, postcode, state, suburb, bathrooms, bedrooms, parkingSpaces, averageRating and numRatings properties. The results are limited to 10 per page. An example of one object in the array is shown below.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "examples": [
+                              5
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "examples": [
+                              "Stylish Waterside Living"
+                            ]
+                          },
+                          "rent": {
+                            "type": "integer",
+                            "examples": [
+                              630
+                            ]
+                          },
+                          "propertyType": {
+                            "type": "string",
+                            "examples": [
+                              "apartment"
+                            ]
+                          },
+                          "latitude": {
+                            "type": "number",
+                            "examples": [
+                              -19.32105337
+                            ]
+                          },
+                          "longitude": {
+                            "type": "number",
+                            "examples": [
+                              146.72911663
+                            ]
+                          },
+                          "postcode": {
+                            "type": "integer",
+                            "examples": [
+                              4817
+                            ]
+                          },
+                          "state": {
+                            "type": "string",
+                            "examples": [
+                              "Qld"
+                            ]
+                          },
+                          "suburb": {
+                            "type": "string",
+                            "examples": [
+                              "Thuringowa Central"
+                            ]
+                          },
+                          "bathrooms": {
+                            "type": "integer",
+                            "examples": [
+                              1
+                            ]
+                          },
+                          "bedrooms": {
+                            "type": "integer",
+                            "examples": [
+                              2
+                            ]
+                          },
+                          "parkingSpaces": {
+                            "type": "integer",
+                            "examples": [
+                              2
+                            ]
+                          },
+                          "averageRating": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "examples": [
+                              3.5
+                            ]
+                          },
+                          "numRatings": {
+                            "type": "integer",
+                            "examples": [
+                              2
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "perPage": {
+                          "type": "integer",
+                          "examples": [
+                            10
+                          ]
+                        },
+                        "currentPage": {
+                          "type": "integer",
+                          "examples": [
+                            1
+                          ]
+                        },
+                        "from": {
+                          "type": "integer",
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "to": {
+                          "type": "integer",
+                          "examples": [
+                            10
+                          ]
+                        },
+                        "total": {
+                          "type": "integer",
+                          "examples": [
+                            6767
+                          ]
+                        },
+                        "lastPage": {
+                          "type": "integer",
+                          "examples": [
+                            677
+                          ]
+                        },
+                        "prevPage": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "examples": [
+                            null
+                          ]
+                        },
+                        "nextPage": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "examples": [
+                            2
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameter. Click on 'Schema' below to see the possible error responses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid postcode parameter. Must be an integer in the range of 0000-9999."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid minimumRent parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid maximumRent parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid minimumBathrooms parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid maximumBathrooms parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid minimumBedrooms parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid maximumBedrooms parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid minimumParking parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid maximumParking parameter. Must be a non-negative integer."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid minimumRating parameter. Must be a non-negative number."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid maximumRating parameter. Must be a non-negative number."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid sortBy parameter. Must refer to a valid sortable property."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid sortOrder parameter. Must be 'asc' or 'desc'."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid sortOrder parameter. sortBy must be specified."
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid page parameter. Must be an integer greater than or equal to 1."
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rentals/{id}": {
+      "get": {
+        "tags": [
+          "Rentals"
+        ],
+        "description": "Returns an object containing data for the specified rental property. The path parameter {id} is required.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the rental property",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an object containing title, rent, description, propertyType, locality, latitude, longitude, postcode, state, streetAddress, suburb, bathrooms, bedrooms, parkingSpaces, agencyName, amenities, averageRating and numRatings propertiers for the queried rental.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "examples": [
+                        "Great location, large family home"
+                      ]
+                    },
+                    "rent": {
+                      "type": "integer",
+                      "examples": [
+                        870
+                      ]
+                    },
+                    "description": {
+                      "type": "string",
+                      "examples": [
+                        "Tucked away in a quiet cul-de-sac in sought-after Eatons Hill, this light-filled home offers relaxed, easy living in a peaceful setting. Elevated to capture breezes year-round, it feels private, airy and welcoming from the moment you arrive. Designed for effortless indoor-outdoor flow, it's perfect for entertaining or unwinding by the pool. Enjoy the convenience of being within walking distance to buses, Eatons Hill Hotel and local shops. A spacious family home in a friendly, well-connected neighbourhood.<br/><br/>Features:<br/>• King-sized master bedroom with spa ensuite and walk-in robe<br/>• Three queen-sized bedrooms with built-in robes<br/>• Three separate internal living areas<br/>• Large dining area plus breakfast bar<br/>• Air conditioning for year-round comfort<br/>• Insulated undercover outdoor entertaining area<br/>• Solar-heated saltwater pool with feature lighting<br/>• Fully fenced, low-maintenance yard<br/>• Generous storage throughout<br/>• Elevated 795sqm block capturing natural light and breezes<br/>• Walking distance to public transport, Eatons Hill Hotel and speciality shops<br/>• Located within highly regarded school catchments and private school bus routes<br/><br/>This property will not last long. Please note that only those that have viewed the property will have their applications processed.<br/><br/>Information contained on any marketing material, website or other portal should not be relied upon and you should make your own enquiries and seek your own independent advice with respect to any property advertised or the information about the property."
+                      ]
+                    },
+                    "propertyType": {
+                      "type": "string",
+                      "examples": [
+                        "house"
+                      ]
+                    },
+                    "locality": {
+                      "type": "string",
+                      "examples": [
+                        "Eatons Hill"
+                      ]
+                    },
+                    "latitude": {
+                      "type": "number",
+                      "examples": [
+                        -27.33943255
+                      ]
+                    },
+                    "longitude": {
+                      "type": "number",
+                      "examples": [
+                        152.94730591
+                      ]
+                    },
+                    "postcode": {
+                      "type": "integer",
+                      "examples": [
+                        4037
+                      ]
+                    },
+                    "state": {
+                      "type": "string",
+                      "examples": [
+                        "Qld"
+                      ]
+                    },
+                    "streetAddress": {
+                      "type": "string",
+                      "examples": [
+                        "23 Valencia Court"
+                      ]
+                    },
+                    "suburb": {
+                      "type": "string",
+                      "examples": [
+                        "Eatons Hill"
+                      ]
+                    },
+                    "bathrooms": {
+                      "type": "integer",
+                      "examples": [
+                        2
+                      ]
+                    },
+                    "bedrooms": {
+                      "type": "integer",
+                      "examples": [
+                        4
+                      ]
+                    },
+                    "parkingSpaces": {
+                      "type": "integer",
+                      "examples": [
+                        2
+                      ]
+                    },
+                    "agencyName": {
+                      "type": "string",
+                      "examples": [
+                        "McGrath Estate Agents Aspley"
+                      ]
+                    },
+                    "amenities": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "examples": [
+                        "Garage: 2, Air Conditioning"
+                      ]
+                    },
+                    "averageRating": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "examples": [
+                        4.25
+                      ]
+                    },
+                    "numRatings": {
+                      "type": "integer",
+                      "examples": [
+                        4
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid query parameters: yourParamHere. Query parameters are not permitted."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested rental property could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "No rental exists with this ID."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ratings": {
+      "get": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Returns a list of ratings made by the current user. This endpoint requires authorisation to use (click the 'Authorize' button and paste in a valid JWT to test this out in Swagger).",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of objects containing rentalId, rating and dateTime properties. The results are limited to 20 per page. An example of one object in the array is shown below.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rentalId": {
+                            "type": "integer",
+                            "examples": [
+                              1234
+                            ]
+                          },
+                          "rating": {
+                            "type": "integer",
+                            "examples": [
+                              3
+                            ]
+                          },
+                          "dateTime": {
+                            "type": "string",
+                            "examples": [
+                              "2026-03-14T23:47:45.371Z"
+                            ]
+                          }
+                        }
+                      },
+                      "examples": [
+                        [
+                          {
+                            "rentalId": 1,
+                            "rating": 3,
+                            "dateTime": "2026-03-11T23:47:18.496Z"
+                          },
+                          {
+                            "rentalId": 17,
+                            "rating": 2,
+                            "dateTime": "2026-03-10T18:26:26.153Z"
+                          },
+                          {
+                            "rentalId": 100,
+                            "rating": 4,
+                            "dateTime": "2026-03-13T21:51:48.752Z"
+                          },
+                          {
+                            "rentalId": 1234,
+                            "rating": 3,
+                            "dateTime": "2026-03-09T17:39:35.365Z"
+                          },
+                          {
+                            "rentalId": 2000,
+                            "rating": 5,
+                            "dateTime": "2026-03-12T22:23:14.986Z"
+                          }
+                        ]
+                      ]
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "examples": [
+                            12
+                          ]
+                        },
+                        "lastPage": {
+                          "type": "integer",
+                          "examples": [
+                            1
+                          ]
+                        },
+                        "prevPage": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "examples": [
+                            null
+                          ]
+                        },
+                        "nextPage": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "examples": [
+                            null
+                          ]
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "examples": [
+                            20
+                          ]
+                        },
+                        "currentPage": {
+                          "type": "integer",
+                          "examples": [
+                            1
+                          ]
+                        },
+                        "from": {
+                          "type": "integer",
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "to": {
+                          "type": "integer",
+                          "examples": [
+                            20
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid page parameter. Must be an integer greater than or equal to 1."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Click on 'Schema' below to see the possible error responses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Authorization header ('Bearer token') not found"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "JWT token has expired"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid JWT token"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ratings/rentals/{id}": {
+      "get": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Returns the rating made by this user for rental with the specified id. This endpoint requires authorisation to use.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the rental property",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An object containing rating and dateTime properties.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rating": {
+                      "type": "integer",
+                      "examples": [
+                        3
+                      ]
+                    },
+                    "dateTime": {
+                      "type": "string",
+                      "examples": [
+                        "2026-03-14T23:47:45.371Z"
+                      ]
+                    }
+                  },
+                  "examples": [
+                    {
+                      "rating": 3,
+                      "dateTime": "2026-03-11T23:47:18.496Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid query parameters: yourParamHere. Query parameters are not permitted."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Click on 'Schema' below to see the possible error responses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Authorization header ('Bearer token') not found"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "JWT token has expired"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid JWT token"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No ratings could be found by this user for this rental ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "No rating exists with this rental ID."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Post a rating for the rental property with the specified id. If the rental property has already been rated by this user, the existing rating will be overwritten. This endpoint requires authorisation to use.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the rental property",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "An object containing an integer from 1-5 indicating the rating to be given to the rental property.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rating": {
+                    "type": "integer",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Upon successfully rating the rental. An object containing rating and dateTime properties.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rating": {
+                      "type": "integer",
+                      "examples": [
+                        3
+                      ]
+                    },
+                    "dateTime": {
+                      "type": "string",
+                      "examples": [
+                        "2026-03-14T23:47:45.371Z"
+                      ]
+                    }
+                  },
+                  "examples": [
+                    {
+                      "rating": 3,
+                      "dateTime": "2026-03-11T23:47:18.496Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid rating.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid rating. Rating must be an integer value between 1 and 5."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Click on 'Schema' below to see the possible error responses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Authorization header ('Bearer token') not found"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "JWT token has expired"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "examples": [
+                            true
+                          ]
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Invalid JWT token"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested rental property could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "No rental exists with this ID."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ratings/debugEraseRatings": {
+      "post": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "This endpoint will simply erase every rating in the database, making every property completely unrated.",
+        "responses": {
+          "200": {
+            "description": "Returns a message confirming ratings erasure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "All ratings successfully erased."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Creates a new user account. A request body containing the user to be registered must be sent.",
+        "requestBody": {
+          "description": "An object containing the email and password of the user to be registered.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "examples": [
+                      "mike@gmail.com"
+                    ]
+                  },
+                  "password": {
+                    "type": "string",
+                    "examples": [
+                      "password"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "User created"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Request body incomplete, both email and password are required"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "User already exists"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "description": "Log in to an existing user account. A request body containing the user credentials must be sent.",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "description": "The credentials of the user to log in.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "examples": [
+                      "mike@gmail.com"
+                    ]
+                  },
+                  "password": {
+                    "type": "string",
+                    "examples": [
+                      "password"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Log in successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "examples": [
+                        "ajsonwebtoken"
+                      ]
+                    },
+                    "tokenType": {
+                      "type": "string",
+                      "examples": [
+                        "Bearer"
+                      ]
+                    },
+                    "expiresIn": {
+                      "type": "number",
+                      "examples": [
+                        86400
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid log in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Request body incomplete, both email and password are required"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Log in failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Incorrect email or password"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/debugLogin": {
+      "post": {
+        "description": "Identical to /user/login, except the generated JWT has an expiry time of 1 second. Used to test API response to expired tokens.",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "description": "The credentials of the user to log in.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "examples": [
+                      "mike@gmail.com"
+                    ]
+                  },
+                  "password": {
+                    "type": "string",
+                    "examples": [
+                      "password"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login with a 1-second token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "examples": [
+                        "ajsonwebtoken"
+                      ]
+                    },
+                    "tokenType": {
+                      "type": "string",
+                      "examples": [
+                        "Bearer"
+                      ]
+                    },
+                    "expiresIn": {
+                      "type": "number",
+                      "examples": [
+                        1
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid log in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Request body incomplete, both email and password are required"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Log in failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Incorrect email or password"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Too many requests, please try again later."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{email}/profile": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "description": "Returns profile information. Use the dropdown to see Public vs Private views.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "examples": [
+                        "mike@gmail.com"
+                      ]
+                    },
+                    "firstName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "examples": [
+                        "Michael"
+                      ]
+                    },
+                    "lastName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "examples": [
+                        "Jordan"
+                      ]
+                    },
+                    "dob": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "examples": [
+                        "1963-02-17"
+                      ]
+                    },
+                    "address": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "examples": [
+                        "123 Fake Street, Springfield"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "authenticatedOwner": {
+                    "summary": "Authenticated Owner",
+                    "value": {
+                      "email": "mike@gmail.com",
+                      "firstName": "Michael",
+                      "lastName": "Jordan",
+                      "dob": "1963-02-17",
+                      "address": "123 Fake Street, Springfield"
+                    }
+                  },
+                  "publicView": {
+                    "summary": "Non-Owner / Public",
+                    "value": {
+                      "email": "mike@gmail.com",
+                      "firstName": "Michael",
+                      "lastName": "Jordan"
+                    }
+                  },
+                  "newlyCreated": {
+                    "summary": "Newly Created User",
+                    "value": {
+                      "email": "notmike@gmail.com",
+                      "firstName": null,
+                      "lastName": null,
+                      "dob": null,
+                      "address": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid JWT token"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "expired": {
+                    "summary": "Token Expired",
+                    "value": {
+                      "error": true,
+                      "message": "JWT token has expired"
+                    }
+                  },
+                  "invalid": {
+                    "summary": "Token Invalid",
+                    "value": {
+                      "error": true,
+                      "message": "Invalid JWT token"
+                    }
+                  },
+                  "malformed": {
+                    "summary": "Header Malformed",
+                    "value": {
+                      "error": true,
+                      "message": "Authorization header is malformed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "User not found"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Profile"
+        ],
+        "description": "Updates profile for the authenticated owner.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "dob",
+                  "address"
+                ],
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "examples": [
+                      "Michael"
+                    ]
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "examples": [
+                      "Jordan"
+                    ]
+                  },
+                  "dob": {
+                    "type": "string",
+                    "examples": [
+                      "1963-02-17"
+                    ]
+                  },
+                  "address": {
+                    "type": "string",
+                    "examples": [
+                      "123 Fake Street, Springfield"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "examples": [
+                        "mike@gmail.com"
+                      ]
+                    },
+                    "firstName": {
+                      "type": "string",
+                      "examples": [
+                        "Michael"
+                      ]
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "examples": [
+                        "Jordan"
+                      ]
+                    },
+                    "dob": {
+                      "type": "string",
+                      "examples": [
+                        "1963-02-17"
+                      ]
+                    },
+                    "address": {
+                      "type": "string",
+                      "examples": [
+                        "123 Fake Street, Springfield"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Invalid input: dob must be a date in the past."
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "incomplete": {
+                    "summary": "Body Incomplete",
+                    "value": {
+                      "error": true,
+                      "message": "Request body incomplete: firstName, lastName, dob and address are required."
+                    }
+                  },
+                  "invalidTypes": {
+                    "summary": "Invalid Name/Address",
+                    "value": {
+                      "error": true,
+                      "message": "Request body invalid: firstName, lastName and address must be strings only."
+                    }
+                  },
+                  "realDate": {
+                    "summary": "Invalid Date",
+                    "value": {
+                      "error": true,
+                      "message": "Invalid input: dob must be a real date in format YYYY-MM-DD."
+                    }
+                  },
+                  "futureDate": {
+                    "summary": "Future Date",
+                    "value": {
+                      "error": true,
+                      "message": "Invalid input: dob must be a date in the past."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Not your profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "examples": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": [
+                        "Forbidden"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
