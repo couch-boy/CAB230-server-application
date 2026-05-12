@@ -854,125 +854,141 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns an object containing title, rent, description, propertyType, locality, latitude, longitude, postcode, state, streetAddress, suburb, bathrooms, bedrooms, parkingSpaces, agencyName, amenities, averageRating and numRatings propertiers for the queried rental.",
+            "description": "Returns full details for the queried rental, including an array of user reviews.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "title": {
-                      "type": "string",
-                      "examples": [
-                        "Great location, large family home"
-                      ]
+                      "type": "string"
                     },
                     "rent": {
-                      "type": "integer",
-                      "examples": [
-                        870
-                      ]
+                      "type": "integer"
                     },
                     "description": {
-                      "type": "string",
-                      "examples": [
-                        "Tucked away in a quiet cul-de-sac in sought-after Eatons Hill, this light-filled home offers relaxed, easy living in a peaceful setting. Elevated to capture breezes year-round, it feels private, airy and welcoming from the moment you arrive. Designed for effortless indoor-outdoor flow, it's perfect for entertaining or unwinding by the pool. Enjoy the convenience of being within walking distance to buses, Eatons Hill Hotel and local shops. A spacious family home in a friendly, well-connected neighbourhood.<br/><br/>Features:<br/>• King-sized master bedroom with spa ensuite and walk-in robe<br/>• Three queen-sized bedrooms with built-in robes<br/>• Three separate internal living areas<br/>• Large dining area plus breakfast bar<br/>• Air conditioning for year-round comfort<br/>• Insulated undercover outdoor entertaining area<br/>• Solar-heated saltwater pool with feature lighting<br/>• Fully fenced, low-maintenance yard<br/>• Generous storage throughout<br/>• Elevated 795sqm block capturing natural light and breezes<br/>• Walking distance to public transport, Eatons Hill Hotel and speciality shops<br/>• Located within highly regarded school catchments and private school bus routes<br/><br/>This property will not last long. Please note that only those that have viewed the property will have their applications processed.<br/><br/>Information contained on any marketing material, website or other portal should not be relied upon and you should make your own enquiries and seek your own independent advice with respect to any property advertised or the information about the property."
-                      ]
+                      "type": "string"
                     },
                     "propertyType": {
-                      "type": "string",
-                      "examples": [
-                        "house"
-                      ]
+                      "type": "string"
                     },
                     "locality": {
-                      "type": "string",
-                      "examples": [
-                        "Eatons Hill"
-                      ]
+                      "type": "string"
                     },
                     "latitude": {
-                      "type": "number",
-                      "examples": [
-                        -27.33943255
-                      ]
+                      "type": "number"
                     },
                     "longitude": {
-                      "type": "number",
-                      "examples": [
-                        152.94730591
-                      ]
+                      "type": "number"
                     },
                     "postcode": {
-                      "type": "integer",
-                      "examples": [
-                        4037
-                      ]
+                      "type": "integer"
                     },
                     "state": {
-                      "type": "string",
-                      "examples": [
-                        "Qld"
-                      ]
+                      "type": "string"
                     },
                     "streetAddress": {
-                      "type": "string",
-                      "examples": [
-                        "23 Valencia Court"
-                      ]
+                      "type": "string"
                     },
                     "suburb": {
-                      "type": "string",
-                      "examples": [
-                        "Eatons Hill"
-                      ]
+                      "type": "string"
                     },
                     "bathrooms": {
-                      "type": "integer",
-                      "examples": [
-                        2
-                      ]
+                      "type": "integer"
                     },
                     "bedrooms": {
-                      "type": "integer",
-                      "examples": [
-                        4
-                      ]
+                      "type": "integer"
                     },
                     "parkingSpaces": {
-                      "type": "integer",
-                      "examples": [
-                        2
-                      ]
+                      "type": "integer"
                     },
                     "agencyName": {
-                      "type": "string",
-                      "examples": [
-                        "McGrath Estate Agents Aspley"
-                      ]
+                      "type": "string"
                     },
                     "amenities": {
                       "type": [
                         "string",
                         "null"
-                      ],
-                      "examples": [
-                        "Garage: 2, Air Conditioning"
                       ]
                     },
                     "averageRating": {
                       "type": [
                         "number",
                         "null"
-                      ],
-                      "examples": [
-                        4.25
                       ]
                     },
                     "numRatings": {
-                      "type": "integer",
-                      "examples": [
-                        4
+                      "type": "integer"
+                    },
+                    "reviews": {
+                      "type": "array",
+                      "description": "A list of all reviews for this property. Returns an empty array if no reviews exist.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rating": {
+                            "type": "integer",
+                            "examples": [
+                              4
+                            ]
+                          },
+                          "user": {
+                            "type": "string",
+                            "examples": [
+                              "john.doe@example.com"
+                            ]
+                          },
+                          "comment": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "examples": [
+                              "Comfortable stay."
+                            ]
+                          },
+                          "dateTime": {
+                            "type": "string",
+                            "examples": [
+                              "2026-03-13T21:51:48.752Z"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "rentalWithReviews": {
+                    "summary": "Rental property with multiple reviews",
+                    "value": {
+                      "title": "Prime Inner-City Living – One Block from the Esplanade!",
+                      "rent": 600,
+                      "averageRating": 4.33,
+                      "numRatings": 3,
+                      "reviews": [
+                        {
+                          "rating": 4,
+                          "user": "john.doe@example.com",
+                          "comment": "Comfortable stay with good facilities.",
+                          "dateTime": "2026-03-13T21:51:48.752Z"
+                        },
+                        {
+                          "rating": 4,
+                          "user": "t.chappell@example.com",
+                          "dateTime": "2026-04-12T08:19:28.374Z"
+                        }
                       ]
+                    }
+                  },
+                  "rentalNoReviews": {
+                    "summary": "Rental property with no reviews",
+                    "value": {
+                      "title": "New Listing",
+                      "rent": 450,
+                      "averageRating": null,
+                      "numRatings": 0,
+                      "reviews": []
                     }
                   }
                 }
@@ -1048,7 +1064,7 @@
         "tags": [
           "Ratings"
         ],
-        "description": "Returns a list of ratings made by the current user. This endpoint requires authorisation to use (click the 'Authorize' button and paste in a valid JWT to test this out in Swagger).",
+        "description": "Returns a list of ratings made by the current user. This endpoint requires authorisation to use.",
         "parameters": [
           {
             "name": "page",
@@ -1067,7 +1083,7 @@
         ],
         "responses": {
           "200": {
-            "description": "An array of objects containing rentalId, rating and dateTime properties. The results are limited to 20 per page. An example of one object in the array is shown below.",
+            "description": "An array of objects containing rentalId, rating, dateTime and optionally a comment.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1090,6 +1106,16 @@
                               3
                             ]
                           },
+                          "comment": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The comment left by the user, if applicable.",
+                            "examples": [
+                              "Excellent property, very clean."
+                            ]
+                          },
                           "dateTime": {
                             "type": "string",
                             "examples": [
@@ -1097,94 +1123,77 @@
                             ]
                           }
                         }
-                      },
-                      "examples": [
-                        [
-                          {
-                            "rentalId": 1,
-                            "rating": 3,
-                            "dateTime": "2026-03-11T23:47:18.496Z"
-                          },
-                          {
-                            "rentalId": 17,
-                            "rating": 2,
-                            "dateTime": "2026-03-10T18:26:26.153Z"
-                          },
-                          {
-                            "rentalId": 100,
-                            "rating": 4,
-                            "dateTime": "2026-03-13T21:51:48.752Z"
-                          },
-                          {
-                            "rentalId": 1234,
-                            "rating": 3,
-                            "dateTime": "2026-03-09T17:39:35.365Z"
-                          },
-                          {
-                            "rentalId": 2000,
-                            "rating": 5,
-                            "dateTime": "2026-03-12T22:23:14.986Z"
-                          }
-                        ]
-                      ]
+                      }
                     },
                     "pagination": {
                       "type": "object",
                       "properties": {
                         "total": {
-                          "type": "integer",
-                          "examples": [
-                            12
-                          ]
+                          "type": "integer"
                         },
                         "lastPage": {
-                          "type": "integer",
-                          "examples": [
-                            1
-                          ]
+                          "type": "integer"
                         },
                         "prevPage": {
                           "type": [
                             "integer",
                             "null"
-                          ],
-                          "examples": [
-                            null
                           ]
                         },
                         "nextPage": {
                           "type": [
                             "integer",
                             "null"
-                          ],
-                          "examples": [
-                            null
                           ]
                         },
                         "perPage": {
-                          "type": "integer",
-                          "examples": [
-                            20
-                          ]
+                          "type": "integer"
                         },
                         "currentPage": {
-                          "type": "integer",
-                          "examples": [
-                            1
-                          ]
+                          "type": "integer"
                         },
                         "from": {
-                          "type": "integer",
-                          "examples": [
-                            0
-                          ]
+                          "type": "integer"
                         },
                         "to": {
-                          "type": "integer",
-                          "examples": [
-                            20
-                          ]
+                          "type": "integer"
                         }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "pagedResults": {
+                    "summary": "Example list with mixed comments",
+                    "value": {
+                      "data": [
+                        {
+                          "rentalId": 1,
+                          "rating": 3,
+                          "comment": "The property was acceptable overall, but some areas could have been cleaner.",
+                          "dateTime": "2026-03-11T23:47:18.496Z"
+                        },
+                        {
+                          "rentalId": 17,
+                          "rating": 2,
+                          "comment": "The location was convenient, but the property needed maintenance.",
+                          "dateTime": "2026-03-10T18:26:26.153Z"
+                        },
+                        {
+                          "rentalId": 1234,
+                          "rating": 3,
+                          "dateTime": "2026-03-09T17:39:35.365Z"
+                        }
+                      ],
+                      "pagination": {
+                        "total": 3,
+                        "lastPage": 1,
+                        "prevPage": null,
+                        "nextPage": null,
+                        "perPage": 20,
+                        "currentPage": 1,
+                        "from": 0,
+                        "to": 20
                       }
                     }
                   }
@@ -1318,7 +1327,7 @@
         ],
         "responses": {
           "200": {
-            "description": "An object containing rating and dateTime properties.",
+            "description": "An object containing rating, dateTime, and optionally a comment.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1330,19 +1339,39 @@
                         3
                       ]
                     },
+                    "comment": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "examples": [
+                        "Decent value for money."
+                      ]
+                    },
                     "dateTime": {
                       "type": "string",
                       "examples": [
                         "2026-03-14T23:47:45.371Z"
                       ]
                     }
+                  }
+                },
+                "examples": {
+                  "withComment": {
+                    "summary": "Rating with Comment",
+                    "value": {
+                      "rating": 3,
+                      "comment": "Decent value for money, but the landlord was very intrusive and annoying.",
+                      "dateTime": "2026-03-11T23:47:18.496Z"
+                    }
                   },
-                  "examples": [
-                    {
+                  "withoutComment": {
+                    "summary": "Rating without Comment",
+                    "value": {
                       "rating": 3,
                       "dateTime": "2026-03-11T23:47:18.496Z"
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -1476,12 +1505,11 @@
         "tags": [
           "Ratings"
         ],
-        "description": "Post a rating for the rental property with the specified id. If the rental property has already been rated by this user, the existing rating will be overwritten. This endpoint requires authorisation to use.",
+        "description": "Post a rating for the rental property. If already rated, the existing rating/comment will be overwritten. Requires authorisation.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "The ID of the rental property",
             "required": true,
             "schema": {
               "type": "integer"
@@ -1494,12 +1522,14 @@
           }
         ],
         "requestBody": {
-          "description": "An object containing an integer from 1-5 indicating the rating to be given to the rental property.",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "rating"
+                ],
                 "properties": {
                   "rating": {
                     "type": "integer",
@@ -1510,6 +1540,27 @@
                       4,
                       5
                     ]
+                  },
+                  "comment": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000,
+                    "description": "Optional comment about the rental."
+                  }
+                }
+              },
+              "examples": {
+                "fullRating": {
+                  "summary": "Rating with Comment",
+                  "value": {
+                    "rating": 3,
+                    "comment": "Decent value for money, but the landlord was very intrusive and annoying."
+                  }
+                },
+                "ratingOnly": {
+                  "summary": "Rating only",
+                  "value": {
+                    "rating": 3
                   }
                 }
               }
@@ -1518,53 +1569,57 @@
         },
         "responses": {
           "201": {
-            "description": "Upon successfully rating the rental. An object containing rating and dateTime properties.",
+            "description": "Successfully rated.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "rating": {
-                      "type": "integer",
-                      "examples": [
-                        3
+                      "type": "integer"
+                    },
+                    "comment": {
+                      "type": [
+                        "string",
+                        "null"
                       ]
                     },
                     "dateTime": {
-                      "type": "string",
-                      "examples": [
-                        "2026-03-14T23:47:45.371Z"
-                      ]
+                      "type": "string"
                     }
-                  },
-                  "examples": [
-                    {
-                      "rating": 3,
-                      "dateTime": "2026-03-11T23:47:18.496Z"
-                    }
-                  ]
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid rating.",
+            "description": "Invalid input.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "error": {
-                      "type": "boolean",
-                      "examples": [
-                        true
-                      ]
+                      "type": "boolean"
                     },
                     "message": {
-                      "type": "string",
-                      "examples": [
-                        "Invalid rating. Rating must be an integer value between 1 and 5."
-                      ]
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidRating": {
+                    "summary": "Invalid Rating",
+                    "value": {
+                      "error": true,
+                      "message": "Invalid rating. Rating must be an integer value between 1 and 5."
+                    }
+                  },
+                  "invalidComment": {
+                    "summary": "Invalid Comment",
+                    "value": {
+                      "error": true,
+                      "message": "Invalid comment parameter. Comment must be a string 1-2000 characters long."
                     }
                   }
                 }

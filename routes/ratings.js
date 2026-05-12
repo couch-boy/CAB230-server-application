@@ -49,7 +49,7 @@ router.get('/', authorization, async (req, res) => {
     });
   }
 
-  const userEmail = req.user.email;
+  const user = req.user.email;
   let page = parseInt(req.query.page) || 1;
   const perPage = 20;
 
@@ -61,14 +61,14 @@ router.get('/', authorization, async (req, res) => {
   }
 
   try {
-    const countRes = await req.db("ratings").where("userEmail", userEmail).count("id as total");
+    const countRes = await req.db("ratings").where("user", user).count("id as total");
     const total = countRes[0].total;
     const lastPage = Math.ceil(total / perPage) || 1;
     const offset = (page - 1) * perPage;
 
     const rows = await req.db("ratings")
       .select("rentalId", "rating", "comment", "dateTime")
-      .where("userEmail", userEmail)
+      .where("user", user)
       .limit(perPage)
       .offset(offset);
 
@@ -106,7 +106,7 @@ router.get('/rentals/:id', authorization, (req, res) => {
 
   req.db("ratings")
     .select("rating", "comment", "dateTime")
-    .where({ rentalId, userEmail: req.user.email })
+    .where({ rentalId, user: req.user.email })
     .first()
     .then(row => {
       if (!row) {
@@ -127,7 +127,7 @@ router.get('/rentals/:id', authorization, (req, res) => {
 // ============================== POST /rentals/{id} ==============================
 router.post('/rentals/:id', authorization, async (req, res) => {
   const rentalId = parseInt(req.params.id);
-  const userEmail = req.user.email;
+  const user = req.user.email;
   const { rating, comment } = req.body;
 
   // 1. Validate Rating
@@ -165,8 +165,8 @@ router.post('/rentals/:id', authorization, async (req, res) => {
 
     // 2. Perform the update/insert
     await req.db("ratings")
-      .insert({ rentalId, userEmail, rating, comment: dbComment, dateTime: now })
-      .onConflict(['rentalId', 'userEmail'])
+      .insert({ rentalId, user, rating, comment: dbComment, dateTime: now })
+      .onConflict(['rentalId', 'user'])
       .merge({ rating, comment: dbComment, dateTime: now });
 
     res.status(201).json(formatRating({ rating, comment: dbComment, dateTime: now }));

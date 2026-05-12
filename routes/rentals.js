@@ -163,7 +163,7 @@ router.get("/:id", (req, res) => {
     });
   }
 
-  // Query 1: Get Property Details + Aggregates
+  // 1. Get Property Details + Aggregates
   const propertyQuery = req.db("data")
     .leftJoin("ratings", "data.id", "ratings.rentalId")
     .select(
@@ -178,38 +178,42 @@ router.get("/:id", (req, res) => {
     .groupBy("data.id")
     .first();
 
-  // Query 2: Get Individual Reviews (all users)
+  // 2. Get Individual Reviews - Order is CRITICAL for the tests
   const reviewsQuery = req.db("ratings")
-    .select("rating", "userEmail", "comment", "dateTime")
-    .where("rentalId", req.params.id);
+    .select("rating", "user", "comment", "dateTime")
+    .where("rentalId", req.params.id)
+    .orderBy("dateTime", "asc"); // 'asc' puts the first posted rating at index [0]
 
   Promise.all([propertyQuery, reviewsQuery])
     .then(([property, reviews]) => {
-      if (!property) {
-        return res.status(404).json({ error: true, message: "Property not found." });
+      // Check if property exists (leftJoin can return a row of nulls)
+      if (!property || property.title === null) {
+        return res.status(404).json({ 
+          error: true, 
+          message: "No rental exists with this ID." 
+        });
       }
 
-      // 1. Format the Property details
       const response = {
         ...property,
-        // Ensure averageRating is null if no ratings exist, or a float
         averageRating: property.averageRating !== null ? parseFloat(property.averageRating) : null,
         numRatings: parseInt(property.numRatings),
-        // Fix coordinates
         latitude: property.latitude !== null ? +property.latitude : null,
         longitude: property.longitude !== null ? +property.longitude : null,
 
-        // 2. Format the reviews array
+        // 3. Format reviews array and conditionally add comment
         reviews: (reviews || []).map(r => {
           const review = {
             rating: r.rating,
-            user: r.userEmail,
+            user: r.user,
             dateTime: new Date(r.dateTime).toISOString()
           };
-          // Only add comment key if it is not null
-          if (r.comment !== null && r.comment !== undefined) {
+
+          // Only add the comment key if it has a non-empty value
+          if (r.comment && r.comment.trim() !== "") {
             review.comment = r.comment;
           }
+          
           return review;
         })
       };
