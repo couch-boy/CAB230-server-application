@@ -89,3 +89,14 @@ export const isValidDate = (dateString) => {
   // Check for "overflow" dates (e.g. Feb 30)
   return d.toISOString().slice(0, 10) === dateString;
 };
+
+export const blockQueryParams = (req, res, next) => {
+  if (Object.keys(req.query).length > 0) {
+    const params = Object.keys(req.query).join(", ");
+    return res.status(400).json({
+      error: true,
+      message: `Invalid query parameters: ${params}. Query parameters are not permitted.`
+    });
+  }
+  next();
+};
