@@ -4,9 +4,7 @@ import { blockQueryParams } from '../middleware/validation.js';
 
 const router = express.Router();
 
-/**
- * Helper to format rating objects for response.
- */
+// Helper to format rating objects for response.
 const formatRating = ({ rating, dateTime, rentalId, comment }) => ({
   rating,
   dateTime: new Date(dateTime).toISOString(),

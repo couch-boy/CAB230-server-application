@@ -3,6 +3,7 @@ import { validateSearchParameters, blockQueryParams } from '../middleware/valida
 
 const router = express.Router();
 
+// ============================== GET /states ==============================
 router.get("/states", blockQueryParams, async (req, res) => {
   try {
     const states = await req.db("data").distinct("state").pluck("state").orderBy("state");
@@ -12,6 +13,7 @@ router.get("/states", blockQueryParams, async (req, res) => {
   }
 });
 
+// ============================== GET /property-types ==============================
 router.get("/property-types", blockQueryParams, async (req, res) => {
   try {
     const types = await req.db("data").distinct("propertyType").pluck("propertyType").orderBy("propertyType");
@@ -21,6 +23,7 @@ router.get("/property-types", blockQueryParams, async (req, res) => {
   }
 });
 
+// ============================== GET /search ==============================
 router.get("/search", async (req, res) => {
   const errorMessage = validateSearchParameters(req.query);
   if (errorMessage) return res.status(400).json({ error: true, message: errorMessage });
@@ -52,7 +55,6 @@ router.get("/search", async (req, res) => {
   };
 
   try {
-    // Count total matches (using raw query or subquery for aggregates if needed)
     const [{ total }] = await req.db("data").modify(applyFilters).count("id as total");
 
     let query = req.db("data")
@@ -94,6 +96,7 @@ router.get("/search", async (req, res) => {
   }
 });
 
+// ============================== GET /{id} ==============================
 router.get("/:id", blockQueryParams, async (req, res) => {
   try {
     const property = await req.db("data")
@@ -112,7 +115,7 @@ router.get("/:id", blockQueryParams, async (req, res) => {
     const reviews = await req.db("ratings")
       .select("rating", "user", "comment", "dateTime")
       .where("rentalId", req.params.id)
-      .orderBy("dateTime", "asc");
+      .orderBy("id", "asc");
 
     res.status(200).json({
       ...property,

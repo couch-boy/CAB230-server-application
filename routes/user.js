@@ -28,6 +28,7 @@ const performLogin = async (req, res, expiresIn) => {
   }
 };
 
+// ============================== POST /register ==============================
 router.post('/register', async (req, res) => {
   const { email, password } = req.body ?? {};
   if (!email || !password) {
@@ -48,9 +49,13 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// ============================== POST /login ==============================
 router.post('/login', (req, res) => performLogin(req, res, 60 * 60 * 24));
+
+// ============================== POST /debugLogin ==============================
 router.post('/debugLogin', (req, res) => performLogin(req, res, 1));
 
+// ============================== GET /{email}/profile ==============================
 router.get('/:email/profile', async (req, res) => {
   const requestedEmail = req.params.email;
   const authHeader = req.headers.authorization;
@@ -81,6 +86,7 @@ router.get('/:email/profile', async (req, res) => {
   }
 });
 
+// ============================== PUT /{email}/profile ==============================
 router.put('/:email/profile', async (req, res) => {
   const requestedEmail = req.params.email;
   const { firstName, lastName, dob, address } = req.body;
