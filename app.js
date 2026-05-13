@@ -8,6 +8,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import swaggerUI from 'swagger-ui-express';
 import swaggerDocument from './docs/rentals-openapi.json' with { type: 'json' };
+import https from 'node:https';
+import fs from 'node:fs';
 
 const app = express();
 const port = 3000;
@@ -75,7 +77,11 @@ app.get('/', (req, res) => {
   `);
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}`);
-});
+const credentials = {
+  key: fs.readFileSync('./certs/selfsigned.key'),
+  cert: fs.readFileSync('./certs/selfsigned.crt')
+};
 
+https.createServer(credentials, app).listen(port, () => {
+  console.log(`Server listening on https://localhost:${port}`);
+});
