@@ -139,3 +139,7 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-05-13 22:00:18
+
+CREATE USER 'rentalsapiuser'@'localhost' IDENTIFIED BY 'IReallyHopeThisPasswordIsStrongEnough';
+GRANT ALL ON rentals.* TO 'rentalsapiuser'@'localhost';
+FLUSH PRIVILEGES;

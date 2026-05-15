@@ -60,7 +60,20 @@ router.get("/search", async (req, res) => {
     let query = req.db("data")
       .leftJoin("ratings", "data.id", "ratings.rentalId")
       .modify(applyFilters)
-      .select("data.*")
+      .select(
+        "data.id",
+        "data.title",
+        "data.rent",
+        "data.propertyType",
+        "data.latitude",
+        "data.longitude",
+        "data.postcode",
+        "data.state",
+        "data.suburb",
+        "data.bathrooms",
+        "data.bedrooms",
+        "data.parkingSpaces"
+      )
       .select(req.db.raw("ROUND(AVG(ratings.rating), 1) as averageRating"))
       .select(req.db.raw("COUNT(ratings.id) as numRatings"))
       .groupBy("data.id");
@@ -101,7 +114,24 @@ router.get("/:id", blockQueryParams, async (req, res) => {
   try {
     const property = await req.db("data")
       .leftJoin("ratings", "data.id", "ratings.rentalId")
-      .select("data.*")
+      .select(
+        "data.title",
+        "data.rent",
+        "data.description",
+        "data.propertyType",
+        "data.locality",
+        "data.latitude",
+        "data.longitude",
+        "data.postcode",
+        "data.state",
+        "data.streetAddress",
+        "data.suburb",
+        "data.bathrooms",
+        "data.bedrooms",
+        "data.parkingSpaces",
+        "data.agencyName",
+        "data.amenities"
+      )
       .select(req.db.raw("ROUND(AVG(ratings.rating), 2) as averageRating"))
       .select(req.db.raw("COUNT(ratings.id) as numRatings"))
       .where("data.id", req.params.id)

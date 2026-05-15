@@ -47,32 +47,7 @@ app.get("/knex", (req, res, next) => {
 app.get('/', (req, res) => {
   res.send(`
     <html>
-      <head>
-        <title>Rental Search API</title>
-        <style>
-          body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f8f9fa; }
-          .container { text-align: center; padding: 2rem; background: white; border-radius: 8px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
-          .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-          .button { padding: 10px 20px; text-decoration: none; color: white; border-radius: 5px; font-weight: bold; transition: opacity 0.2s; }
-          .rentals { background-color: #007bff; }
-          .ratings { background-color: #28a745; }
-          .user { background-color: #6c757d; }
-          .docs { background-color: #ffc107; color: black; }
-          .button:hover { opacity: 0.8; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>Rental Search API Gateway</h1>
-          <p>Select a module to explore the API endpoints:</p>
-          <div class="btn-group">
-            <a href="/rentals" class="button rentals">Rentals Search</a>
-            <a href="/ratings" class="button ratings">My Ratings</a>
-            <a href="/user" class="button user">User Auth</a>
-            <a href="/docs" class="button docs">API Documentation</a>
-          </div>
-        </div>
-      </body>
+      CAB230 server-application<br>Semester 1 2026<br>Mitchell de Waard<br>n8578524
     </html>
   `);
 });

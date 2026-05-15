@@ -76,8 +76,7 @@ router.get('/:email/profile', async (req, res) => {
     if (!user) return res.status(404).json({ error: true, message: "User not found" });
 
     if (authenticatedEmail === requestedEmail) {
-      const { hash, ...profile } = user;
-      res.status(200).json(profile);
+      res.status(200).json({ email: user.email, firstName: user.firstName, lastName: user.lastName, dob: user.dob, address: user.address });
     } else {
       res.status(200).json({ email: user.email, firstName: user.firstName, lastName: user.lastName });
     }
